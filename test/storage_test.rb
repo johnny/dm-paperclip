@@ -1,5 +1,4 @@
-if false
-require 'test/helper'
+require File.expand_path(File.join(File.dirname(__FILE__), 'helper'))
 require 'aws/s3'
 
 class StorageTest < Test::Unit::TestCase
@@ -322,5 +321,4 @@ class StorageTest < Test::Unit::TestCase
       end
     end
   end
-end
 end
