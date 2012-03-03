@@ -7,6 +7,7 @@ require 'tempfile'
 require 'dm-core'
 require 'dm-validations'
 require 'dm-migrations'
+
 begin
   require 'ruby-debug'
 rescue LoadError

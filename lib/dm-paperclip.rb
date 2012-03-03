@@ -38,6 +38,11 @@ require 'dm-paperclip/thumbnail'
 require 'dm-paperclip/storage'
 require 'dm-paperclip/interpolations'
 require 'dm-paperclip/attachment'
+require 'active_support/core_ext/object/blank'
+require 'active_support/core_ext/hash/keys'
+require 'active_support/inflector'
+require 'active_support/core_ext/string/inflections'
+require 'active_support/core_ext/class/attribute.rb'
 
 # The base module that gets included in ActiveRecord::Base. See the
 # documentation for Paperclip::ClassMethods for more useful information.
@@ -208,6 +213,7 @@ module Paperclip
   module Resource
 
     def self.included(base)
+      base.class_attribute :attachment_definitions
       base.extend Paperclip::ClassMethods
 
       # Done at this time to ensure that the user
@@ -283,16 +289,8 @@ module Paperclip
     def has_attached_file name, options = {}
       include InstanceMethods
 
-      class << self
-        attr_reader :attachment_definitions
-
-        def attachment_definitions=(opts)
-          @attachment_definitions = opts
-        end
-      end
-
-      @attachment_definitions = {} unless @attachment_definitions
-      @attachment_definitions[name] = {:validations => []}.merge(options)
+      self.attachment_definitions = {} if self.attachment_definitions.nil?
+      self.attachment_definitions[name] = {:validations => []}.merge(options)
 
       property_options = options.delete_if { |k,v| ![ :public, :protected, :private, :accessor, :reader, :writer ].include?(key) }
       property_options[:required] = false
@@ -323,7 +321,7 @@ module Paperclip
       end
 
       if Paperclip.config.use_dm_validations
-        add_validator_to_context(opts_from_validator_args([name]), [name], Paperclip::Validate::CopyAttachmentErrors)
+        validators.add(Paperclip::Validate::CopyAttachmentErrors, name)
       end
 
     end
@@ -331,7 +329,7 @@ module Paperclip
     # Returns the attachment definitions defined by each call to
     # has_attached_file.
     def attachment_definitions
-      read_inheritable_attribute(:attachment_definitions)
+      self.class.attachment_definitions
     end
   end
 

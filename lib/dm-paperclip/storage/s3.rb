@@ -143,7 +143,7 @@ module Paperclip
       end
 
       def parse_credentials(creds)
-        creds = find_credentials(creds).to_mash.stringify_keys!
+        creds = find_credentials(creds).stringify_keys!
         if defined?(Merb) && Merb.respond_to?(:env)
           (creds[Merb.env] || creds).symbolize_keys
         elsif defined?(RAILS_ENV)
