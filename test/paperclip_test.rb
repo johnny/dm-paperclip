@@ -62,6 +62,7 @@ class PaperclipTest < Test::Unit::TestCase
     context "with a subclass" do
       setup do
         class ::SubDummy < Dummy; end
+        SubDummy.finalize
       end
 
       should "be able to use the attachment from the subclass" do
