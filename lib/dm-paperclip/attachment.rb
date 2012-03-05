@@ -413,6 +413,7 @@ module Paperclip
     end
 
     def seconds_since_unix_epoch(date)
+      return date.to_i if date.respond_to?(:to_i)
       seconds_per_day = 86_400
       ((date - ::DateTime.civil(1970)) * seconds_per_day).to_i
     end
