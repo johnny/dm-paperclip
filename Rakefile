@@ -1,7 +1,7 @@
 require 'rake'
 require 'rake/testtask'
-require 'rake/rdoctask'
-require 'rake/gempackagetask'
+require 'rdoc/task'
+require 'rubygems/package_task'
 
 $LOAD_PATH << File.join(File.dirname(__FILE__), 'lib')
 require 'dm-core'
@@ -55,9 +55,9 @@ end
 spec = Gem::Specification.new do |s| 
   s.name              = "dm-paperclip"
   s.version           = Paperclip::VERSION
-  s.author            = "Ken Robertson"
-  s.email             = "ken@invalidlogic.com"
-  s.homepage          = "http://invalidlogic.com/dm-paperclip/"
+  s.author            = "Jonas von Andrian"
+  s.email             = "jvadev@gmail.com"
+  s.homepage          = "https://github.com/johnny/dm-paperclip"
   s.platform          = Gem::Platform::RUBY
   s.summary           = "File attachments as attributes for DataMapper, based on the original Paperclip by Jon Yurek at Thoughtbot"
   s.files             = FileList["README.rdoc",
@@ -76,7 +76,7 @@ spec = Gem::Specification.new do |s|
   s.requirements << "dm-validations"
 end
  
-Rake::GemPackageTask.new(spec) do |pkg| 
+Gem::PackageTask.new(spec) do |pkg| 
   pkg.need_tar = true 
 end
 
