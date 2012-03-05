@@ -38,11 +38,21 @@ require 'dm-paperclip/thumbnail'
 require 'dm-paperclip/storage'
 require 'dm-paperclip/interpolations'
 require 'dm-paperclip/attachment'
-require 'active_support/core_ext/object/blank'
-require 'active_support/core_ext/hash/keys'
-require 'active_support/inflector'
-require 'active_support/core_ext/string/inflections'
-require 'active_support/core_ext/class/attribute.rb'
+unless Object.const_defined?(:ActiveSupport) || Object.const_defined?(:Extlib)
+  begin
+    require 'active_support/core_ext/object/blank'
+    require 'active_support/core_ext/hash/keys'
+    require 'active_support/inflector'
+    require 'active_support/core_ext/string/inflections'
+    require 'active_support/core_ext/class/attribute.rb'
+  rescue LoadError
+    begin
+      require 'extlib'
+    rescue LoadError
+      raise "dm-paperclip needs either active_support or extlib"
+    end
+  end
+end
 
 # The base module that gets included in ActiveRecord::Base. See the
 # documentation for Paperclip::ClassMethods for more useful information.
@@ -175,7 +185,7 @@ module Paperclip
     end
 
     def processor name #:nodoc:
-      name = ActiveSupport::Inflector.classify(name.to_s)
+      name = name.to_s.classify
       processor = Paperclip.const_get(name)
       unless processor.ancestors.include?(Paperclip::Processor)
         raise PaperclipError.new("[paperclip] Processor #{name} was not found")
@@ -213,7 +223,11 @@ module Paperclip
   module Resource
 
     def self.included(base)
-      base.class_attribute :attachment_definitions
+      if Object.const_defined?(:ActiveSupport)
+        base.class_attribute :attachment_definitions
+      else
+        base.class_inheritable_accessor :attachment_definitions
+      end
       base.extend Paperclip::ClassMethods
 
       # Done at this time to ensure that the user

@@ -63,6 +63,7 @@ spec = Gem::Specification.new do |s|
   s.files             = FileList["README.rdoc",
                                  "LICENSE",
                                  "Rakefile",
+                                 "dm-paperclip.gemspec",
                                  "init.rb",
                                  "{lib,tasks,test}/**/*"].to_a
   s.require_path      = "lib"
